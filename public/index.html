@@ -1,58 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Desempenho dos Carros</title>
-    <style>
-      @keyframes highlight {
-        from {
-          background-color: yellow;
-        }
-        to {
-          background-color: transparent;
-        }
-      }
+    <head>
+        <meta charset="UTF-8" />
+        <title>Desempenho dos Carros</title>
+        <style>
+            @keyframes highlight {
+                from {
+                    background-color: yellow;
+                }
+                to {
+                    background-color: transparent;
+                }
+            }
 
-      .highlight {
-        animation: highlight 2s ease-out;
-      }
-    </style>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const ws = new WebSocket("ws://localhost:3000");
+            .highlight {
+                animation: highlight 2s ease-out;
+            }
+        </style>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Construindo a URL do WebSocket dinamicamente
+                let wsUrl;
+                if (window.location.protocol === 'https:') {
+                    wsUrl = 'wss://' + window.location.host;
+                } else {
+                    wsUrl = 'ws://' + window.location.host;
+                }
 
-        ws.onmessage = function (event) {
-          const entrada = JSON.parse(event.data);
-          // Atualize sua página aqui com a nova entrada
-          console.log("Nova entrada:", entrada);
+                const ws = new WebSocket(wsUrl);
 
-          const entradasDiv = document.getElementById("entradas");
-          // Atualizando a div com a nova entrada
+                ws.onmessage = function (event) {
+                    const entrada = JSON.parse(event.data);
+                    // Atualize sua página aqui com a nova entrada
+                    console.log('Nova entrada:', entrada);
 
-          const entradaElement = document.createElement("p");
-          entradaElement.textContent = `Tempo: ${entrada.tempo} segundos`;
+                    const entradasDiv = document.getElementById('entradas');
+                    // Atualizando a div com a nova entrada
 
-          // Aplicando a classe highlight para o efeito visual
-          entradaElement.classList.add("highlight");
+                    const entradaElement = document.createElement('p');
+                    entradaElement.textContent = `Tempo: ${entrada.tempo} segundos`;
 
-          // Inserindo o novo elemento no início da div
-          if (entradasDiv.firstChild) {
-            entradasDiv.insertBefore(entradaElement, entradasDiv.firstChild);
-          } else {
-            entradasDiv.appendChild(entradaElement); // Ou entradasDiv.prepend(entradaElement);
-          }
+                    // Aplicando a classe highlight para o efeito visual
+                    entradaElement.classList.add('highlight');
 
-          console.log("Nova entrada:", entrada);
-        };
+                    // Inserindo o novo elemento no início da div
+                    if (entradasDiv.firstChild) {
+                        entradasDiv.insertBefore(
+                            entradaElement,
+                            entradasDiv.firstChild
+                        );
+                    } else {
+                        entradasDiv.appendChild(entradaElement); // Ou entradasDiv.prepend(entradaElement);
+                    }
 
-        ws.onerror = function (event) {
-          console.error("WebSocket error:", event);
-        };
-      });
-    </script>
-  </head>
-  <body>
-    <h1>Desempenho dos Carros</h1>
-    <div id="entradas"></div>
-  </body>
+                    console.log('Nova entrada:', entrada);
+                };
+
+                ws.onerror = function (event) {
+                    console.error('WebSocket error:', event);
+                };
+            });
+        </script>
+    </head>
+    <body>
+        <h1>Desempenho dos Carros</h1>
+        <div id="entradas"></div>
+    </body>
 </html>
